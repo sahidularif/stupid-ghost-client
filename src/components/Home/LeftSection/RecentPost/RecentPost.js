@@ -18,6 +18,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import pImage from '../../../../images/167221-original.jpg';
 import { Container, Row, Col, Image } from 'react-bootstrap';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
+
 const useStyles = makeStyles((theme) => ({
     root: {
         maxWidth: 345,
@@ -41,8 +42,9 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function RecipeReviewCard() {
-    const [recentPost, setRecentPost] = useState()
+export default function RecentPost() {
+    const [story, setStory] = useState([])
+    console.log(story)
     const [readMore, setReadMore] = useState(false)
     const posts = [
         {
@@ -66,13 +68,18 @@ export default function RecipeReviewCard() {
     
     ]
     useEffect(() => {
-        fetch('')
-    },[])
-    const readPost = (post) =>{
-        // setReadMore(true)
-        setRecentPost(post); 
+        fetch('https://infinite-meadow-06277.herokuapp.com/stories')
+          .then((res) => res.json())
+          .then((story) => {
+              console.log(story.image)
+            setStory(story);        
+          });
+      }, []);
+    // const readPost = (post) =>{
+    //     // setReadMore(true)
+    //     setRecentPost(post); 
 
-    }
+    // }
     const post = posts.find(post => post.id == 1);
     const classes = useStyles();
 
@@ -87,8 +94,8 @@ export default function RecipeReviewCard() {
     return (
         <Container fluid className="p-3">
             <Row>
-                {
-                    recentPost ? (
+                {/* {
+                    story ? (
                         <Col md={8} className="m-auto">
                             <div>
                                 <Image src={post.coverImage} fluid alt="hero image" rounded />
@@ -101,15 +108,15 @@ export default function RecipeReviewCard() {
                             </div>
                         </Col>
                     ):('')
-                }
+                } */}
             </Row>
             <Row>
                 <h3>Recent post</h3>
                 {
-                    posts.map((post) =>
+                    story.map((story) =>
                         <Col lg={4} className="mt-5 ml-0 mr-0">
 
-                            <Card className={classes.root} onClick={()=>readPost(post)}>
+                            <Card className={classes.root}>
                                 <CardHeader
                                     avatar={
                                         <Avatar aria-label="recipe" className={classes.avatar}>
@@ -122,20 +129,20 @@ export default function RecipeReviewCard() {
                                         </IconButton>
                                     }
 
-                                    title={post.postTitle.length > 30
-                                        ? shortPost(post.postTitle.slice(0, 30).trim() + '...')
-                                        : shortPost(post.postTitle).trim()
+                                    title={story.title.length > 30
+                                        ? shortPost(story.title.slice(0, 30).trim() + '...')
+                                        : shortPost(story.title).trim()
                                     }
                                     subheader="September 14, 2016"
                                 />
                                 <CardMedia
                                     className={classes.media}
-                                    image={post.coverImage}
+                                    image={`data:image/png;base64,${story.image.img}`}
                                     title="Paella dish"
                                 />
                                 <CardContent>
                                     <Typography variant="body2" color="textSecondary" component="p">
-                                        {post.postBody}
+                                        {story.description}
                                     </Typography>
                                 </CardContent>
                                 <CardActions disableSpacing>
